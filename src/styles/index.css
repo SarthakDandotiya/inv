@@ -1,0 +1,534 @@
+:root {
+  /* Themeable tokens — overridden per-invoice via inline vars on .invoice-sheet. */
+  --sheet-bg: #ffffff;
+  --ink: #1a1a1a;
+  --heading: #21212b;
+  --bold: #21212b;
+  --line: #d1d5db;
+  --label: #6b7280;
+  --table-head-bg: #f3f4f6;
+
+  --muted: #6b7280;
+  --line-strong: #9ca3af;
+  --accent: #1f4e79;
+  --page-bg: #e5e7eb;
+  --field-hover: #eef2ff;
+  --danger: #b91c1c;
+  /* A4 geometry */
+  --a4-width: 210mm;
+  --a4-height: 297mm;
+  --a4-pad: 14mm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+/* ---------- Toolbar (never exported) ---------- */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+}
+
+.toolbar-title {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolbar-actions button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toolbar-actions button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.toolbar-actions button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.toolbar-actions .btn-secondary {
+  background: #ffffff;
+  color: var(--accent);
+}
+
+/* ---------- Theme (colour) controls ---------- */
+.theme-controls {
+  position: relative;
+}
+
+.theme-controls > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: #ffffff;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.theme-controls > summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-controls > summary::before {
+  content: '🎨 ';
+}
+
+.theme-grid {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 10px 16px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.theme-swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.theme-swatch input[type='color'] {
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.theme-reset {
+  grid-column: 1 / -1;
+  justify-self: start;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ---------- Sheet container ---------- */
+.sheet-scroll {
+  padding: 24px;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.invoice-sheet {
+  width: var(--a4-width);
+  min-height: var(--a4-height);
+  padding: var(--a4-pad);
+  background: var(--sheet-bg);
+  color: var(--ink);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  font-size: 11px;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- Editable inputs (document look) ---------- */
+.field-input,
+.footer-input,
+.cell-input {
+  font: inherit;
+  color: var(--ink);
+  width: 100%;
+  border: none;
+  border-bottom: 1px dashed transparent;
+  background: transparent;
+  padding: 1px 2px;
+  border-radius: 3px;
+}
+
+.field-input:hover,
+.footer-input:hover,
+.cell-input:hover {
+  background: var(--field-hover);
+}
+
+.field-input:focus,
+.footer-input:focus,
+.cell-input:focus {
+  outline: none;
+  background: var(--field-hover);
+  border-bottom-color: var(--accent);
+}
+
+::placeholder {
+  color: #b0b6be;
+}
+
+/* ---------- Header ---------- */
+.invoice-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.invoice-title {
+  margin: 0;
+  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--heading);
+  text-transform: uppercase;
+}
+
+.logo-area {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logo-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-img {
+  max-width: 160px;
+  max-height: 80px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  line-height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: #ffffff;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+.logo-placeholder {
+  font: inherit;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+  border-radius: 6px;
+  padding: 22px 20px;
+  cursor: pointer;
+}
+
+/* ---------- Meta row (number / date) ---------- */
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 0;
+}
+
+.meta-field {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.meta-date {
+  justify-content: flex-end;
+}
+
+.meta-date .field-input,
+.meta-date .field-value {
+  width: auto;
+}
+
+.field-label {
+  color: var(--label);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Parties ---------- */
+.party {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-heading {
+  margin: 0 0 2px;
+  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--heading);
+}
+
+.field {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.field-label {
+  min-width: fit-content;
+}
+
+.party-name .field-input {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--bold);
+}
+
+/* ---------- Items table ---------- */
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.items-table col.col-desc {
+  width: 50%;
+}
+.items-table col.col-qty {
+  width: 20%;
+}
+.items-table col.col-price {
+  width: 30%;
+}
+
+.items-table th,
+.items-table td {
+  border: 1px solid var(--line);
+  padding: 5px 6px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.items-table thead th {
+  background: var(--table-head-bg);
+  color: var(--bold);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.items-table .cell-qty,
+.items-table .cell-price {
+  text-align: right;
+}
+
+.cell-qty .cell-input,
+.cell-price .cell-input {
+  text-align: right;
+}
+
+.desc-input {
+  min-height: 1.4em;
+}
+
+.cell-desc {
+  position: relative;
+}
+
+.row-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  line-height: 14px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: #ffffff;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.total-row .total-label {
+  text-align: right;
+  font-weight: 700;
+  color: var(--bold);
+  background: var(--table-head-bg);
+}
+
+.total-row .total-value {
+  text-align: right;
+  font-weight: 700;
+  color: var(--bold);
+}
+
+.words-row td {
+  font-style: italic;
+}
+
+.words-label {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--label);
+}
+
+.add-row {
+  margin-top: 6px;
+  font: inherit;
+  font-size: 11px;
+  color: var(--accent);
+  background: transparent;
+  border: 1px dashed var(--accent);
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* ---------- Payment ---------- */
+.payment {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ---------- Footer ---------- */
+.invoice-footer {
+  margin-top: auto;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  color: var(--label);
+}
+
+.footer-item {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.footer-label {
+  font-weight: 600;
+}
+
+.footer-input {
+  width: auto;
+  min-width: 140px;
+}
+
+/* ---------- Editor / export visibility ---------- */
+.export-only {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ================= EXPORT MODE ================= */
+/* Applied to .invoice-sheet during capture: strip all editing chrome. */
+.invoice-sheet.exporting .editor-only {
+  display: none !important;
+}
+
+.invoice-sheet.exporting .export-only {
+  display: inline !important;
+}
+
+.invoice-sheet.exporting .field--empty {
+  display: none !important;
+}
+
+.invoice-sheet.exporting .field-input,
+.invoice-sheet.exporting .footer-input,
+.invoice-sheet.exporting .cell-input {
+  border-bottom-color: transparent;
+  background: transparent;
+}
+
+.invoice-sheet.exporting ::placeholder {
+  color: transparent !important;
+}
+
+/* Inline `resize: vertical` on the description textarea must be overridden so the
+   drag grip does not appear in exports. */
+.invoice-sheet.exporting textarea {
+  resize: none !important;
+}
+
+/* ---------- Responsive editing (screen only) ---------- */
+@media (max-width: 800px) {
+  .sheet-scroll {
+    padding: 12px;
+    justify-content: flex-start;
+  }
+}
