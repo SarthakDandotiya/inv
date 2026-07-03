@@ -1,9 +1,11 @@
 import {
+  DEFAULT_THEME,
   SCHEMA_VERSION,
   createEmptyInvoice,
   createId,
   type InvoiceData,
   type Item,
+  type Theme,
 } from './types';
 
 export const STORAGE_KEY = 'inv.invoice.v1';
@@ -14,6 +16,25 @@ function isObject(v: unknown): v is Record<string, unknown> {
 
 function str(v: unknown): string {
   return typeof v === 'string' ? v : '';
+}
+
+const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+/** Accept only valid hex colours; fall back to the default for anything else
+ * (also prevents a crafted stored value from being injected as a CSS value). */
+function color(v: unknown, fallback: string): string {
+  return typeof v === 'string' && HEX_COLOR.test(v.trim()) ? v.trim() : fallback;
+}
+
+function normalizeTheme(raw: unknown): Theme {
+  const o = isObject(raw) ? raw : {};
+  return {
+    background: color(o.background, DEFAULT_THEME.background),
+    text: color(o.text, DEFAULT_THEME.text),
+    heading: color(o.heading, DEFAULT_THEME.heading),
+    bold: color(o.bold, DEFAULT_THEME.bold),
+    line: color(o.line, DEFAULT_THEME.line),
+  };
 }
 
 function normalizeItem(raw: unknown): Item {
@@ -71,6 +92,7 @@ export function normalizeInvoice(raw: unknown): InvoiceData {
       instagram: str(footer.instagram),
     },
     logo: typeof raw.logo === 'string' ? raw.logo : null,
+    theme: normalizeTheme(raw.theme),
   };
 }
 

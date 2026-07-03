@@ -67,6 +67,30 @@ test('export mode hides all editing chrome', async ({ page }) => {
   await expect(page.getByRole('button', { name: '+ Add row' })).toBeVisible();
 });
 
+test('changes theme colours and persists them', async ({ page }) => {
+  const sheet = page.locator('.invoice-sheet');
+  await expect(sheet).toHaveCSS('--heading', '#21212b');
+
+  // Use the native value setter so React's controlled-input tracker registers the change.
+  const setColor = (label: string, value: string) =>
+    page.getByLabel(label).evaluate((el, v) => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+      setter.call(el, v);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, value);
+
+  await page.getByText('Colours').click();
+  await setColor('Background', '#fff8e1');
+  await setColor('Heading', '#7b1fa2');
+
+  await expect(sheet).toHaveCSS('--sheet-bg', '#fff8e1');
+  await expect(sheet).toHaveCSS('--heading', '#7b1fa2');
+
+  await page.waitForTimeout(500);
+  await page.reload();
+  await expect(page.locator('.invoice-sheet')).toHaveCSS('--heading', '#7b1fa2');
+});
+
 test('exports a PDF download', async ({ page }) => {
   await page.getByPlaceholder('INV-001').fill('INV-9');
   const downloadPromise = page.waitForEvent('download');

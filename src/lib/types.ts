@@ -1,4 +1,25 @@
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
+
+export interface Theme {
+  /** Invoice sheet background colour. */
+  background: string;
+  /** Base body text colour. */
+  text: string;
+  /** Heading colour (Invoice title + section headings). */
+  heading: string;
+  /** Colour for bold/emphasised text (names, totals, table headers). */
+  bold: string;
+  /** Line separator / border colour. */
+  line: string;
+}
+
+export const DEFAULT_THEME: Theme = {
+  background: '#ffffff',
+  text: '#1a1a1a',
+  heading: '#21212b',
+  bold: '#21212b',
+  line: '#d1d5db',
+};
 
 export interface Party {
   name: string;
@@ -42,6 +63,7 @@ export interface InvoiceData {
   footer: Footer;
   /** Data URL of the uploaded logo, or null when none. */
   logo: string | null;
+  theme: Theme;
 }
 
 let idCounter = 0;
@@ -65,5 +87,6 @@ export function createEmptyInvoice(): InvoiceData {
     payment: { beneficiaryName: '', bankName: '', accountNumber: '', ifsc: '' },
     footer: { email: '', instagram: '' },
     logo: null,
+    theme: { ...DEFAULT_THEME },
   };
 }

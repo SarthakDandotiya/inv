@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import InvoiceHeader from './components/InvoiceHeader';
 import PartyBlock from './components/PartyBlock';
 import ItemsTable from './components/ItemsTable';
@@ -8,6 +8,7 @@ import Toolbar from './components/Toolbar';
 import { exportBasename, exportPDF, exportPNG } from './lib/export';
 import { clearInvoice, loadInvoice, saveInvoice } from './lib/storage';
 import {
+  DEFAULT_THEME,
   createEmptyInvoice,
   createEmptyItem,
   type FromParty,
@@ -16,6 +17,7 @@ import {
   type Item,
   type Party,
   type Payment,
+  type Theme,
 } from './lib/types';
 
 /** Format an ISO date (yyyy-mm-dd) as e.g. "03 Jul 2026" for the export view. */
@@ -50,6 +52,9 @@ export default function App() {
     setData((p) => ({ ...p, payment: { ...p.payment, ...patch } }));
   const updateFooter = (patch: Partial<Footer>) =>
     setData((p) => ({ ...p, footer: { ...p.footer, ...patch } }));
+  const updateTheme = (patch: Partial<Theme>) =>
+    setData((p) => ({ ...p, theme: { ...p.theme, ...patch } }));
+  const resetTheme = () => setData((p) => ({ ...p, theme: { ...DEFAULT_THEME } }));
 
   const handleItemChange = (id: string, patch: Partial<Omit<Item, 'id'>>) =>
     setData((p) => ({
@@ -86,6 +91,14 @@ export default function App() {
     }
   };
 
+  const themeStyle = {
+    '--sheet-bg': data.theme.background,
+    '--ink': data.theme.text,
+    '--heading': data.theme.heading,
+    '--bold': data.theme.bold,
+    '--line': data.theme.line,
+  } as CSSProperties;
+
   return (
     <div className="app">
       <Toolbar
@@ -93,10 +106,13 @@ export default function App() {
         onExportPDF={() => runExport('pdf')}
         onNewInvoice={handleNewInvoice}
         busy={busy}
+        theme={data.theme}
+        onThemeChange={updateTheme}
+        onThemeReset={resetTheme}
       />
 
       <div className="sheet-scroll">
-        <div className="invoice-sheet" ref={sheetRef}>
+        <div className="invoice-sheet" ref={sheetRef} style={themeStyle}>
           <InvoiceHeader logo={data.logo} onLogoChange={(logo) => update({ logo })} />
 
           <div className="meta-row">

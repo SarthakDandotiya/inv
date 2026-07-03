@@ -1,9 +1,15 @@
 :root {
+  /* Themeable tokens — overridden per-invoice via inline vars on .invoice-sheet. */
+  --sheet-bg: #ffffff;
   --ink: #1a1a1a;
-  --muted: #6b7280;
+  --heading: #21212b;
+  --bold: #21212b;
   --line: #d1d5db;
+
+  --muted: #6b7280;
   --line-strong: #9ca3af;
-  --head-bg: #f3f4f6;
+  /* Translucent so the header/total fill adapts to any background colour. */
+  --head-bg: rgba(0, 0, 0, 0.05);
   --accent: #1f4e79;
   --page-bg: #e5e7eb;
   --field-hover: #eef2ff;
@@ -25,7 +31,7 @@ body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   background: var(--page-bg);
   -webkit-font-smoothing: antialiased;
@@ -86,6 +92,77 @@ body {
   color: var(--accent);
 }
 
+/* ---------- Theme (colour) controls ---------- */
+.theme-controls {
+  position: relative;
+}
+
+.theme-controls > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: #ffffff;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.theme-controls > summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-controls > summary::before {
+  content: '🎨 ';
+}
+
+.theme-grid {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 10px 16px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.theme-swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.theme-swatch input[type='color'] {
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.theme-reset {
+  grid-column: 1 / -1;
+  justify-self: start;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 /* ---------- Sheet container ---------- */
 .sheet-scroll {
   padding: 24px;
@@ -98,7 +175,7 @@ body {
   width: var(--a4-width);
   min-height: var(--a4-height);
   padding: var(--a4-pad);
-  background: #ffffff;
+  background: var(--sheet-bg);
   color: var(--ink);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
   font-size: 11px;
@@ -150,10 +227,11 @@ body {
 
 .invoice-title {
   margin: 0;
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--accent);
+  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--heading);
   text-transform: uppercase;
 }
 
@@ -242,11 +320,11 @@ body {
 
 .section-heading {
   margin: 0 0 2px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--accent);
+  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  color: var(--heading);
 }
 
 .field {
@@ -262,6 +340,7 @@ body {
 .party-name .field-input {
   font-weight: 700;
   font-size: 13px;
+  color: var(--bold);
 }
 
 /* ---------- Items table ---------- */
@@ -283,7 +362,7 @@ body {
 
 .items-table th,
 .items-table td {
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   padding: 5px 6px;
   vertical-align: top;
   text-align: left;
@@ -291,6 +370,7 @@ body {
 
 .items-table thead th {
   background: var(--head-bg);
+  color: var(--bold);
   font-weight: 700;
   font-size: 11px;
 }
@@ -332,12 +412,14 @@ body {
 .total-row .total-label {
   text-align: right;
   font-weight: 700;
+  color: var(--bold);
   background: var(--head-bg);
 }
 
 .total-row .total-value {
   text-align: right;
   font-weight: 700;
+  color: var(--bold);
 }
 
 .words-row td {

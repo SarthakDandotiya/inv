@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../App';
 
@@ -95,6 +95,21 @@ describe('App', () => {
     await user.click(screen.getAllByRole('button', { name: 'Remove row' })[0]);
     expect(screen.queryByRole('button', { name: 'Remove row' })).toBeNull();
     expect(screen.getAllByPlaceholderText('Description')).toHaveLength(1);
+  });
+
+  it('applies a chosen heading colour to the invoice sheet', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    // Default heading colour.
+    const sheet = container.querySelector('.invoice-sheet') as HTMLElement;
+    expect(sheet.style.getPropertyValue('--heading')).toBe('#21212b');
+
+    await user.click(screen.getByText('Colours'));
+    const headingPicker = screen.getByLabelText('Heading') as HTMLInputElement;
+    fireEvent.change(headingPicker, { target: { value: '#ff0000' } });
+
+    expect(sheet.style.getPropertyValue('--heading')).toBe('#ff0000');
   });
 
   it('renders the Total inside the items table footer', () => {

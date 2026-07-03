@@ -44,6 +44,19 @@ describe('storage', () => {
     expect(inv.items.length).toBeGreaterThan(0);
   });
 
+  it('fills default theme colours when missing', () => {
+    const inv = normalizeInvoice({ invoiceNumber: 'A1' });
+    expect(inv.theme.heading).toBe('#21212b');
+    expect(inv.theme.background).toBe('#ffffff');
+  });
+
+  it('keeps valid theme colours and rejects invalid ones', () => {
+    const inv = normalizeInvoice({ theme: { heading: '#abc', background: 'red; evil', text: '#123456' } });
+    expect(inv.theme.heading).toBe('#abc'); // valid short hex kept
+    expect(inv.theme.text).toBe('#123456');
+    expect(inv.theme.background).toBe('#ffffff'); // invalid -> default
+  });
+
   it('gives items an id when missing', () => {
     const inv = normalizeInvoice({ items: [{ description: 'no id', quantity: '1', price: '10' }] });
     expect(inv.items[0].id).toBeTruthy();
