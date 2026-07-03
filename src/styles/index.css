@@ -28,6 +28,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* Stop mobile browsers from inflating text (which overflowed/clipped inputs). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -173,6 +176,9 @@ body {
 
 .invoice-sheet {
   width: var(--a4-width);
+  /* Never let the centering flexbox shrink the sheet below A4 on small screens
+     (that would wrap text, grow the height and spill onto a second page). */
+  flex-shrink: 0;
   min-height: var(--a4-height);
   padding: var(--a4-pad);
   background: var(--sheet-bg);
@@ -506,6 +512,18 @@ body {
 
 .invoice-sheet.exporting .field--empty {
   display: none !important;
+}
+
+/* Export mirrors: plain-text stand-ins for inputs (html2canvas renders text
+   cleanly but clips <input>/<textarea> content). Hidden while editing. */
+.print-value {
+  display: none;
+}
+
+.invoice-sheet.exporting .print-value {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .invoice-sheet.exporting .field-input,

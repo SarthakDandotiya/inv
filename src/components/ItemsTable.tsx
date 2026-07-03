@@ -1,4 +1,4 @@
-import AutoTextarea from './AutoTextarea';
+import EditableValue from './EditableValue';
 import { computeTotal, formatINR } from '../lib/currency';
 import { numberToIndianWords } from '../lib/numberToWords';
 import type { Item } from '../lib/types';
@@ -43,32 +43,33 @@ export default function ItemsTable({ items, onItemChange, onAddRow, onRemoveRow 
                     ×
                   </button>
                 )}
-                <AutoTextarea
-                  className="cell-input desc-input"
+                <EditableValue
+                  className="cell-input"
+                  extraClassName="desc-input"
                   value={item.description}
+                  multiline
                   resizable
                   placeholder="Description"
-                  onChange={(e) => onItemChange(item.id, { description: e.target.value })}
+                  onChange={(v) => onItemChange(item.id, { description: v })}
                 />
               </td>
               <td className="cell-qty">
-                <input
+                <EditableValue
                   className="cell-input"
-                  type="text"
-                  inputMode="decimal"
                   value={item.quantity}
+                  inputMode="decimal"
                   placeholder="0"
-                  onChange={(e) => onItemChange(item.id, { quantity: e.target.value })}
+                  onChange={(v) => onItemChange(item.id, { quantity: v })}
                 />
               </td>
               <td className="cell-price">
-                <input
-                  className="cell-input price-input"
-                  type="text"
-                  inputMode="decimal"
+                <EditableValue
+                  className="cell-input"
+                  extraClassName="price-input"
                   value={item.price}
+                  inputMode="decimal"
                   placeholder="0.00"
-                  onChange={(e) => onItemChange(item.id, { price: e.target.value })}
+                  onChange={(v) => onItemChange(item.id, { price: v })}
                 />
               </td>
             </tr>

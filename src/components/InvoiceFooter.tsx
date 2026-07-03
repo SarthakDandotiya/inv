@@ -1,3 +1,4 @@
+import EditableValue from './EditableValue';
 import type { Footer } from '../lib/types';
 
 type Props = {
@@ -14,23 +15,21 @@ export default function InvoiceFooter({ value, onChange }: Props) {
     <footer className="invoice-footer">
       <div className={`footer-item ${value.email.trim() === '' ? 'field--empty' : ''}`}>
         <span className="footer-label">Email</span>
-        <input
+        <EditableValue
           className="footer-input"
-          type="text"
-          inputMode="email"
           value={value.email}
+          inputMode="email"
           placeholder="you@example.com"
-          onChange={(e) => onChange({ email: e.target.value })}
+          onChange={(v) => onChange({ email: v })}
         />
       </div>
       <div className={`footer-item ${value.instagram.trim() === '' ? 'field--empty' : ''}`}>
         <span className="footer-label">Instagram</span>
-        <input
+        <EditableValue
           className="footer-input"
-          type="text"
           value={value.instagram}
           placeholder="@handle"
-          onChange={(e) => onChange({ instagram: e.target.value })}
+          onChange={(v) => onChange({ instagram: v })}
         />
       </div>
     </footer>
