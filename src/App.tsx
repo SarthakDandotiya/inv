@@ -97,6 +97,8 @@ export default function App() {
     '--heading': data.theme.heading,
     '--bold': data.theme.bold,
     '--line': data.theme.line,
+    '--label': data.theme.label,
+    '--table-head-bg': data.theme.tableHeadBg,
   } as CSSProperties;
 
   return (

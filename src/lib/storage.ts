@@ -34,6 +34,8 @@ function normalizeTheme(raw: unknown): Theme {
     heading: color(o.heading, DEFAULT_THEME.heading),
     bold: color(o.bold, DEFAULT_THEME.bold),
     line: color(o.line, DEFAULT_THEME.line),
+    label: color(o.label, DEFAULT_THEME.label),
+    tableHeadBg: color(o.tableHeadBg, DEFAULT_THEME.tableHeadBg),
   };
 }
 

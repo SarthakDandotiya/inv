@@ -48,6 +48,8 @@ describe('storage', () => {
     const inv = normalizeInvoice({ invoiceNumber: 'A1' });
     expect(inv.theme.heading).toBe('#21212b');
     expect(inv.theme.background).toBe('#ffffff');
+    expect(inv.theme.label).toBe('#6b7280');
+    expect(inv.theme.tableHeadBg).toBe('#f3f4f6');
   });
 
   it('keeps valid theme colours and rejects invalid ones', () => {

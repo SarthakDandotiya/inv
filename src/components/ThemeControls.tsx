@@ -12,6 +12,8 @@ const FIELDS: { key: keyof Theme; label: string }[] = [
   { key: 'heading', label: 'Heading' },
   { key: 'bold', label: 'Bold text' },
   { key: 'line', label: 'Lines' },
+  { key: 'label', label: 'Labels' },
+  { key: 'tableHeadBg', label: 'Table header' },
 ];
 
 /** Colour pickers for the invoice theme. Lives in the toolbar, never exported. */

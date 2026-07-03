@@ -11,6 +11,16 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/inv/');
 });
 
+test('shows a loader in the initial HTML and replaces it once rendered', async ({ request, page }) => {
+  // The static HTML ships the loader so it paints before JS runs.
+  const html = await (await request.get('/inv/')).text();
+  expect(html).toContain('id="app-loader"');
+
+  // After the app mounts (fonts ready or timed out), the loader is gone.
+  await expect(page.locator('#app-loader')).toHaveCount(0);
+  await expect(page.locator('.invoice-sheet')).toBeVisible();
+});
+
 test('renders the invoice with default rows', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Invoice', exact: true })).toBeVisible();
   await expect(page.getByPlaceholder('Description')).toHaveCount(3);
