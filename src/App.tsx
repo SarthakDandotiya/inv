@@ -5,6 +5,7 @@ import ItemsTable from './components/ItemsTable';
 import PaymentDetails from './components/PaymentDetails';
 import InvoiceFooter from './components/InvoiceFooter';
 import Toolbar from './components/Toolbar';
+import EditableValue from './components/EditableValue';
 import { exportBasename, exportPDF, exportPNG } from './lib/export';
 import { clearInvoice, loadInvoice, saveInvoice } from './lib/storage';
 import {
@@ -120,12 +121,11 @@ export default function App() {
           <div className="meta-row">
             <div className="meta-field meta-number">
               <span className="field-label">Invoice No.</span>
-              <input
+              <EditableValue
                 className="field-input"
-                type="text"
                 value={data.invoiceNumber}
                 placeholder="INV-001"
-                onChange={(e) => update({ invoiceNumber: e.target.value })}
+                onChange={(v) => update({ invoiceNumber: v })}
               />
             </div>
             <div className={`meta-field meta-date ${data.date.trim() === '' ? 'field--empty' : ''}`}>

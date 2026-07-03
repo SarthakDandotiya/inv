@@ -1,4 +1,4 @@
-import AutoTextarea from './AutoTextarea';
+import EditableValue from './EditableValue';
 
 type Props = {
   label: string;
@@ -30,23 +30,14 @@ export default function Field({
   return (
     <div className={`field ${empty ? 'field--empty' : ''} ${className}`.trim()}>
       {!hideLabel && <span className="field-label">{label}</span>}
-      {multiline ? (
-        <AutoTextarea
-          className="field-input"
-          value={value}
-          placeholder={placeholder ?? label}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      ) : (
-        <input
-          className="field-input"
-          type="text"
-          inputMode={inputMode}
-          value={value}
-          placeholder={placeholder ?? label}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      )}
+      <EditableValue
+        className="field-input"
+        value={value}
+        placeholder={placeholder ?? label}
+        multiline={multiline}
+        inputMode={inputMode}
+        onChange={onChange}
+      />
     </div>
   );
 }

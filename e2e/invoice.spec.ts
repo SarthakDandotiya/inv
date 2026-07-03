@@ -63,8 +63,9 @@ test('uploads and removes a logo', async ({ page }) => {
   await expect(page.locator('.logo-img')).toHaveCount(0);
 });
 
-test('export mode hides all editing chrome', async ({ page }) => {
+test('export mode hides all editing chrome and swaps inputs for text', async ({ page }) => {
   await page.getByRole('button', { name: '+ Add row' }).click();
+  await page.getByPlaceholder('INV-001').fill('INV-77');
   // Simulate the state used during capture.
   await page.evaluate(() => document.querySelector('.invoice-sheet')?.classList.add('exporting'));
 
@@ -72,9 +73,14 @@ test('export mode hides all editing chrome', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Remove row' }).first()).toBeHidden();
   // An untouched empty field should not render in export mode.
   await expect(page.locator('.party-to .field--empty').first()).toBeHidden();
+  // Inputs are hidden; their plain-text mirrors are shown (html2canvas-safe).
+  await expect(page.getByPlaceholder('INV-001')).toBeHidden();
+  await expect(page.locator('.meta-number .print-value')).toHaveText('INV-77');
+  await expect(page.locator('.meta-number .print-value')).toBeVisible();
 
   await page.evaluate(() => document.querySelector('.invoice-sheet')?.classList.remove('exporting'));
   await expect(page.getByRole('button', { name: '+ Add row' })).toBeVisible();
+  await expect(page.getByPlaceholder('INV-001')).toBeVisible();
 });
 
 test('changes theme colours and persists them', async ({ page }) => {

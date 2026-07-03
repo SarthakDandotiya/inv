@@ -69,12 +69,14 @@ export async function exportPDF(node: HTMLElement, filename = 'invoice.pdf'): Pr
     const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // Place the full image, adding pages when the content is taller than A4.
-    let heightLeft = imgHeight;
+    // Draw the full image on page one. Only spill onto further pages when the
+    // overflow is real content — a small overflow (sub-pixel rounding or the
+    // sheet's bottom whitespace) is clipped rather than pushed to a blank page.
+    const OVERFLOW_TOLERANCE = 24; // pt (~8mm)
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    let heightLeft = imgHeight - pageHeight;
     let position = 0;
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    while (heightLeft > 0) {
+    while (heightLeft > OVERFLOW_TOLERANCE) {
       position -= pageHeight;
       pdf.addPage();
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
