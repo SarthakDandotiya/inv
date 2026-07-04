@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../App';
 
@@ -46,7 +46,7 @@ describe('App', () => {
     const totalValue = container.querySelector('.total-value');
     expect(totalValue?.textContent).toBe('₹350.50');
     expect(
-      screen.getByText(/Indian Rupees Three Hundred Fifty and Fifty Paise Only/),
+      screen.getByText(/Three Hundred Fifty Rupees and Fifty Paise Only/),
     ).toBeInTheDocument();
   });
 
@@ -64,6 +64,10 @@ describe('App', () => {
     const email = screen.getByPlaceholderText('you@example.com') as HTMLInputElement;
     await user.type(email, 'hi@acme.in');
     expect(email.value).toBe('hi@acme.in');
+
+    const phone = screen.getByPlaceholderText('+91 98765 43210') as HTMLInputElement;
+    await user.type(phone, '+91 98765 43210');
+    expect(phone.value).toBe('+91 98765 43210');
   });
 
   it('clears the invoice on "New invoice" when confirmed', async () => {
@@ -77,6 +81,29 @@ describe('App', () => {
 
     await user.click(screen.getByRole('button', { name: 'New invoice' }));
     expect((screen.getByPlaceholderText('INV-001') as HTMLInputElement).value).toBe('');
+  });
+
+  it('saves a template on export and prepopulates it on New invoice', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<App />);
+
+    const names = screen.getAllByPlaceholderText('Name'); // [0] From, [1] To
+    await user.type(names[0], 'Acme Studio');
+    await user.type(names[1], 'Client Co');
+    await user.type(screen.getByPlaceholderText('INV-001'), 'INV-1');
+    await user.type(screen.getByPlaceholderText('you@example.com'), 'me@acme.in');
+
+    await user.click(screen.getByRole('button', { name: 'Export PDF' }));
+    await waitFor(() => expect(localStorage.getItem('inv.template.v1')).toBeTruthy());
+
+    await user.click(screen.getByRole('button', { name: 'New invoice' }));
+
+    const after = screen.getAllByPlaceholderText('Name');
+    expect((after[0] as HTMLInputElement).value).toBe('Acme Studio'); // From kept
+    expect((after[1] as HTMLInputElement).value).toBe(''); // To cleared
+    expect((screen.getByPlaceholderText('INV-001') as HTMLInputElement).value).toBe(''); // number cleared
+    expect((screen.getByPlaceholderText('you@example.com') as HTMLInputElement).value).toBe('me@acme.in'); // footer kept
   });
 
   it('triggers PDF export from the toolbar', async () => {
@@ -112,19 +139,26 @@ describe('App', () => {
     expect(sheet.style.getPropertyValue('--heading')).toBe('#ff0000');
   });
 
-  it('exposes the Labels and Table header pickers and applies them', async () => {
+  it('exposes the Labels and Table accent pickers and applies them', async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
     const sheet = container.querySelector('.invoice-sheet') as HTMLElement;
     expect(sheet.style.getPropertyValue('--label')).toBe('#6b7280');
-    expect(sheet.style.getPropertyValue('--table-head-bg')).toBe('#f3f4f6');
+    expect(sheet.style.getPropertyValue('--table-accent')).toBe('#f3f4f6');
 
     await user.click(screen.getByText('Colours'));
     fireEvent.change(screen.getByLabelText('Labels'), { target: { value: '#112233' } });
-    fireEvent.change(screen.getByLabelText('Table header'), { target: { value: '#445566' } });
+    fireEvent.change(screen.getByLabelText('Table accent'), { target: { value: '#445566' } });
 
     expect(sheet.style.getPropertyValue('--label')).toBe('#112233');
-    expect(sheet.style.getPropertyValue('--table-head-bg')).toBe('#445566');
+    expect(sheet.style.getPropertyValue('--table-accent')).toBe('#445566');
+  });
+
+  it('no longer exposes a Bold text picker', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByText('Colours'));
+    expect(screen.queryByLabelText('Bold text')).toBeNull();
   });
 
   it('renders the Total inside the items table footer', () => {

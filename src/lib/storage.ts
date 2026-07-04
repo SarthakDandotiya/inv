@@ -4,11 +4,13 @@ import {
   createEmptyInvoice,
   createId,
   type InvoiceData,
+  type InvoiceTemplate,
   type Item,
   type Theme,
 } from './types';
 
 export const STORAGE_KEY = 'inv.invoice.v1';
+export const TEMPLATE_KEY = 'inv.template.v1';
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
@@ -32,10 +34,10 @@ function normalizeTheme(raw: unknown): Theme {
     background: color(o.background, DEFAULT_THEME.background),
     text: color(o.text, DEFAULT_THEME.text),
     heading: color(o.heading, DEFAULT_THEME.heading),
-    bold: color(o.bold, DEFAULT_THEME.bold),
     line: color(o.line, DEFAULT_THEME.line),
     label: color(o.label, DEFAULT_THEME.label),
-    tableHeadBg: color(o.tableHeadBg, DEFAULT_THEME.tableHeadBg),
+    // Migrate the old `tableHeadBg` key to `tableAccent`.
+    tableAccent: color(o.tableAccent ?? o.tableHeadBg, DEFAULT_THEME.tableAccent),
   };
 }
 
@@ -91,6 +93,7 @@ export function normalizeInvoice(raw: unknown): InvoiceData {
     },
     footer: {
       email: str(footer.email),
+      phone: str(footer.phone),
       instagram: str(footer.instagram),
     },
     logo: typeof raw.logo === 'string' ? raw.logo : null,
@@ -124,5 +127,36 @@ export function clearInvoice(): void {
     localStorage.removeItem(STORAGE_KEY);
   } catch {
     // ignore
+  }
+}
+
+/**
+ * Snapshot the reusable fields (From, Payment, Footer, Logo, Theme) so a new
+ * invoice can be prepopulated with them. Called whenever an export is triggered.
+ */
+export function saveTemplate(data: InvoiceData): void {
+  try {
+    const template: InvoiceTemplate = {
+      from: data.from,
+      payment: data.payment,
+      footer: data.footer,
+      logo: data.logo,
+      theme: data.theme,
+    };
+    localStorage.setItem(TEMPLATE_KEY, JSON.stringify({ version: SCHEMA_VERSION, ...template }));
+  } catch {
+    // ignore (e.g. quota exceeded)
+  }
+}
+
+/** Load the saved template, or null if none/corrupt. Reuses invoice normalization. */
+export function loadTemplate(): InvoiceTemplate | null {
+  try {
+    const rawStr = localStorage.getItem(TEMPLATE_KEY);
+    if (!rawStr) return null;
+    const inv = normalizeInvoice(JSON.parse(rawStr));
+    return { from: inv.from, payment: inv.payment, footer: inv.footer, logo: inv.logo, theme: inv.theme };
+  } catch {
+    return null;
   }
 }

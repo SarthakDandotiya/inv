@@ -34,33 +34,37 @@ describe('integerToIndianWords', () => {
 });
 
 describe('numberToIndianWords', () => {
+  it('formats a whole-rupee amount', () => {
+    expect(numberToIndianWords(5000)).toBe('Five Thousand Rupees Only');
+  });
+
   it('formats a full amount with paise', () => {
     expect(numberToIndianWords(123456.78)).toBe(
-      'Indian Rupees One Lakh Twenty-Three Thousand Four Hundred Fifty-Six and Seventy-Eight Paise Only',
+      'One Lakh Twenty-Three Thousand Four Hundred Fifty-Six Rupees and Seventy-Eight Paise Only',
     );
   });
 
   it('omits paise when zero', () => {
-    expect(numberToIndianWords(500)).toBe('Indian Rupees Five Hundred Only');
+    expect(numberToIndianWords(500)).toBe('Five Hundred Rupees Only');
   });
 
   it('handles zero amount', () => {
-    expect(numberToIndianWords(0)).toBe('Indian Rupees Zero Only');
+    expect(numberToIndianWords(0)).toBe('Zero Rupees Only');
   });
 
   it('rounds paise to two decimals', () => {
-    expect(numberToIndianWords(10.005)).toBe('Indian Rupees Ten and One Paise Only');
+    expect(numberToIndianWords(10.005)).toBe('Ten Rupees and One Paise Only');
   });
 
   it('carries paise rounding up into rupees', () => {
-    expect(numberToIndianWords(9.999)).toBe('Indian Rupees Ten Only');
+    expect(numberToIndianWords(9.999)).toBe('Ten Rupees Only');
   });
 
   it('handles negatives', () => {
-    expect(numberToIndianWords(-5.5)).toBe('Minus Indian Rupees Five and Fifty Paise Only');
+    expect(numberToIndianWords(-5.5)).toBe('Minus Five Rupees and Fifty Paise Only');
   });
 
   it('is safe against NaN', () => {
-    expect(numberToIndianWords(NaN)).toBe('Indian Rupees Zero Only');
+    expect(numberToIndianWords(NaN)).toBe('Zero Rupees Only');
   });
 });

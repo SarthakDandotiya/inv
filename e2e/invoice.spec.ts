@@ -40,7 +40,7 @@ test('computes Total and amount in words from the Price column', async ({ page }
 
   await expect(page.locator('.total-value')).toHaveText('₹350.50');
   await expect(page.locator('.words-row')).toContainText(
-    'Indian Rupees Three Hundred Fifty and Fifty Paise Only',
+    'Three Hundred Fifty Rupees and Fifty Paise Only',
   );
 });
 
@@ -105,6 +105,27 @@ test('changes theme colours and persists them', async ({ page }) => {
   await page.waitForTimeout(500);
   await page.reload();
   await expect(page.locator('.invoice-sheet')).toHaveCSS('--heading', '#7b1fa2');
+});
+
+test('reuses From/footer/theme on New invoice after export, clears To/items', async ({ page }) => {
+  await page.locator('.party-from').getByPlaceholder('Name').fill('Acme Studio');
+  await page.locator('.party-to').getByPlaceholder('Name').fill('Client Co');
+  await page.getByPlaceholder('INV-001').fill('INV-1');
+  await page.getByPlaceholder('you@example.com').fill('me@acme.in');
+
+  // Exporting snapshots the reusable fields into the template.
+  const dl = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export PNG' }).click();
+  await dl;
+  await expect(page.getByRole('button', { name: 'Export PDF' })).toBeEnabled();
+
+  page.once('dialog', (d) => d.accept());
+  await page.getByRole('button', { name: 'New invoice' }).click();
+
+  await expect(page.locator('.party-from').getByPlaceholder('Name')).toHaveValue('Acme Studio');
+  await expect(page.getByPlaceholder('you@example.com')).toHaveValue('me@acme.in');
+  await expect(page.locator('.party-to').getByPlaceholder('Name')).toHaveValue('');
+  await expect(page.getByPlaceholder('INV-001')).toHaveValue('');
 });
 
 test('exports a PDF download', async ({ page }) => {

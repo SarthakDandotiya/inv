@@ -55,7 +55,7 @@ export default function InvoiceHeader({ logo, onLogoChange }: Props) {
   };
 
   return (
-    <header className="invoice-header">
+    <header className={`invoice-header ${logo ? 'has-logo' : ''}`.trim()}>
       <h1 className="invoice-title">Invoice</h1>
       <div className="logo-area">
         {logo ? (

@@ -23,6 +23,16 @@ export default function InvoiceFooter({ value, onChange }: Props) {
           onChange={(v) => onChange({ email: v })}
         />
       </div>
+      <div className={`footer-item ${value.phone.trim() === '' ? 'field--empty' : ''}`}>
+        <span className="footer-label">Phone</span>
+        <EditableValue
+          className="footer-input"
+          value={value.phone}
+          inputMode="tel"
+          placeholder="+91 98765 43210"
+          onChange={(v) => onChange({ phone: v })}
+        />
+      </div>
       <div className={`footer-item ${value.instagram.trim() === '' ? 'field--empty' : ''}`}>
         <span className="footer-label">Instagram</span>
         <EditableValue

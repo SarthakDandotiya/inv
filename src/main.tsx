@@ -4,7 +4,7 @@ import App from './App';
 import './styles/index.css';
 
 // Fonts we want ready before first paint of the app.
-const FONT_SPECS = ['400 1rem "DM Sans"', '700 1rem "DM Sans"', '400 1rem "DM Serif Display"'];
+const FONT_SPECS = ['400 1rem "DM Sans"', '500 1rem "DM Sans"', '700 1rem "DM Sans"'];
 // Never block rendering longer than this — fall back to system fonts if the CDN
 // is slow, blocked, or the Font Loading API is unavailable.
 const FONT_TIMEOUT_MS = 3000;
