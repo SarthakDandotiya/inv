@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export interface Theme {
   /** Invoice sheet background colour. */
@@ -52,6 +52,7 @@ export interface Payment {
 
 export interface Footer {
   email: string;
+  phone: string;
   instagram: string;
 }
 
@@ -88,7 +89,7 @@ export function createEmptyInvoice(): InvoiceData {
     to: { name: '', address: '', gstin: '' },
     items: [createEmptyItem(), createEmptyItem(), createEmptyItem()],
     payment: { beneficiaryName: '', bankName: '', accountNumber: '', ifsc: '' },
-    footer: { email: '', instagram: '' },
+    footer: { email: '', phone: '', instagram: '' },
     logo: null,
     theme: { ...DEFAULT_THEME },
   };

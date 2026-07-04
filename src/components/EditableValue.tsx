@@ -10,7 +10,7 @@ type Props = {
   extraClassName?: string;
   multiline?: boolean;
   resizable?: boolean;
-  inputMode?: 'text' | 'email' | 'numeric' | 'decimal';
+  inputMode?: 'text' | 'email' | 'numeric' | 'decimal' | 'tel';
 };
 
 /**

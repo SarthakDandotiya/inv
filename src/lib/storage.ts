@@ -91,6 +91,7 @@ export function normalizeInvoice(raw: unknown): InvoiceData {
     },
     footer: {
       email: str(footer.email),
+      phone: str(footer.phone),
       instagram: str(footer.instagram),
     },
     logo: typeof raw.logo === 'string' ? raw.logo : null,

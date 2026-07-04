@@ -64,6 +64,10 @@ describe('App', () => {
     const email = screen.getByPlaceholderText('you@example.com') as HTMLInputElement;
     await user.type(email, 'hi@acme.in');
     expect(email.value).toBe('hi@acme.in');
+
+    const phone = screen.getByPlaceholderText('+91 98765 43210') as HTMLInputElement;
+    await user.type(phone, '+91 98765 43210');
+    expect(phone.value).toBe('+91 98765 43210');
   });
 
   it('clears the invoice on "New invoice" when confirmed', async () => {
