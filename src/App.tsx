@@ -7,11 +7,11 @@ import InvoiceFooter from './components/InvoiceFooter';
 import Toolbar from './components/Toolbar';
 import EditableValue from './components/EditableValue';
 import { exportBasename, exportPDF, exportPNG } from './lib/export';
-import { clearInvoice, loadInvoice, saveInvoice } from './lib/storage';
+import { loadInvoice, loadTemplate, saveInvoice, saveTemplate } from './lib/storage';
 import {
   DEFAULT_THEME,
-  createEmptyInvoice,
   createEmptyItem,
+  createInvoiceFromTemplate,
   type FromParty,
   type Footer,
   type InvoiceData,
@@ -71,9 +71,15 @@ export default function App() {
     }));
 
   const handleNewInvoice = () => {
-    if (!confirm('Clear this invoice and start a new one? This cannot be undone.')) return;
-    clearInvoice();
-    setData(createEmptyInvoice());
+    if (
+      !confirm(
+        'Start a new invoice? The To details and items will be cleared; your From, ' +
+          'payment, footer, logo and colours will be kept.',
+      )
+    )
+      return;
+    // Prepopulate the reusable fields from the last export's template.
+    setData(createInvoiceFromTemplate(loadTemplate()));
   };
 
   const runExport = async (kind: 'png' | 'pdf') => {
@@ -84,6 +90,8 @@ export default function App() {
       const base = exportBasename(data.invoiceNumber);
       if (kind === 'png') await exportPNG(node, `${base}.png`);
       else await exportPDF(node, `${base}.pdf`);
+      // Remember the reusable fields so a new invoice can reuse them.
+      saveTemplate(data);
     } catch (err) {
       console.error(err);
       alert('Sorry, the export failed. Please try again.');

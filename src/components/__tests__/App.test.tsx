@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../App';
 
@@ -81,6 +81,29 @@ describe('App', () => {
 
     await user.click(screen.getByRole('button', { name: 'New invoice' }));
     expect((screen.getByPlaceholderText('INV-001') as HTMLInputElement).value).toBe('');
+  });
+
+  it('saves a template on export and prepopulates it on New invoice', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<App />);
+
+    const names = screen.getAllByPlaceholderText('Name'); // [0] From, [1] To
+    await user.type(names[0], 'Acme Studio');
+    await user.type(names[1], 'Client Co');
+    await user.type(screen.getByPlaceholderText('INV-001'), 'INV-1');
+    await user.type(screen.getByPlaceholderText('you@example.com'), 'me@acme.in');
+
+    await user.click(screen.getByRole('button', { name: 'Export PDF' }));
+    await waitFor(() => expect(localStorage.getItem('inv.template.v1')).toBeTruthy());
+
+    await user.click(screen.getByRole('button', { name: 'New invoice' }));
+
+    const after = screen.getAllByPlaceholderText('Name');
+    expect((after[0] as HTMLInputElement).value).toBe('Acme Studio'); // From kept
+    expect((after[1] as HTMLInputElement).value).toBe(''); // To cleared
+    expect((screen.getByPlaceholderText('INV-001') as HTMLInputElement).value).toBe(''); // number cleared
+    expect((screen.getByPlaceholderText('you@example.com') as HTMLInputElement).value).toBe('me@acme.in'); // footer kept
   });
 
   it('triggers PDF export from the toolbar', async () => {

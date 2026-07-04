@@ -70,6 +70,19 @@ export interface InvoiceData {
   theme: Theme;
 }
 
+/**
+ * The reusable parts of an invoice, snapshotted on export and used to
+ * prepopulate a new invoice. Excludes the per-invoice fields (invoice number,
+ * date, To details, items) which change every time.
+ */
+export interface InvoiceTemplate {
+  from: FromParty;
+  payment: Payment;
+  footer: Footer;
+  logo: string | null;
+  theme: Theme;
+}
+
 let idCounter = 0;
 export function createId(): string {
   idCounter += 1;
@@ -92,5 +105,22 @@ export function createEmptyInvoice(): InvoiceData {
     footer: { email: '', phone: '', instagram: '' },
     logo: null,
     theme: { ...DEFAULT_THEME },
+  };
+}
+
+/**
+ * A fresh invoice seeded with a saved template's reusable fields. Per-invoice
+ * fields (number, date, To, items) stay blank.
+ */
+export function createInvoiceFromTemplate(template: InvoiceTemplate | null): InvoiceData {
+  const invoice = createEmptyInvoice();
+  if (!template) return invoice;
+  return {
+    ...invoice,
+    from: { ...template.from },
+    payment: { ...template.payment },
+    footer: { ...template.footer },
+    logo: template.logo,
+    theme: { ...template.theme },
   };
 }

@@ -1,5 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { STORAGE_KEY, clearInvoice, loadInvoice, normalizeInvoice, saveInvoice } from '../storage';
+import {
+  STORAGE_KEY,
+  clearInvoice,
+  loadInvoice,
+  loadTemplate,
+  normalizeInvoice,
+  saveInvoice,
+  saveTemplate,
+} from '../storage';
 import { SCHEMA_VERSION, createEmptyInvoice } from '../types';
 
 describe('storage', () => {
@@ -74,5 +82,34 @@ describe('storage', () => {
     saveInvoice(createEmptyInvoice());
     clearInvoice();
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('returns null template when none saved', () => {
+    expect(loadTemplate()).toBeNull();
+  });
+
+  it('saves and loads the reusable template (only reusable fields)', () => {
+    const inv = createEmptyInvoice();
+    inv.from.name = 'Acme Studio';
+    inv.payment.bankName = 'HDFC';
+    inv.footer.phone = '+91 99999 00000';
+    inv.theme.heading = '#123456';
+    inv.logo = 'data:image/png;base64,AAAA';
+    // Per-invoice fields that must NOT be part of the template:
+    inv.to.name = 'Client Co';
+    inv.invoiceNumber = 'INV-1';
+    inv.items = [{ id: 'x', description: 'Work', quantity: '1', price: '500' }];
+
+    saveTemplate(inv);
+    const tpl = loadTemplate();
+    expect(tpl).not.toBeNull();
+    expect(tpl!.from.name).toBe('Acme Studio');
+    expect(tpl!.payment.bankName).toBe('HDFC');
+    expect(tpl!.footer.phone).toBe('+91 99999 00000');
+    expect(tpl!.theme.heading).toBe('#123456');
+    expect(tpl!.logo).toBe('data:image/png;base64,AAAA');
+    // The template type has no To / items / invoiceNumber keys.
+    expect((tpl as unknown as Record<string, unknown>).to).toBeUndefined();
+    expect((tpl as unknown as Record<string, unknown>).items).toBeUndefined();
   });
 });
