@@ -46,7 +46,7 @@ describe('App', () => {
     const totalValue = container.querySelector('.total-value');
     expect(totalValue?.textContent).toBe('₹350.50');
     expect(
-      screen.getByText(/Indian Rupees Three Hundred Fifty and Fifty Paise Only/),
+      screen.getByText(/Three Hundred Fifty Rupees and Fifty Paise Only/),
     ).toBeInTheDocument();
   });
 

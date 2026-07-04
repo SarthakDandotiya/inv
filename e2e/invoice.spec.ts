@@ -40,7 +40,7 @@ test('computes Total and amount in words from the Price column', async ({ page }
 
   await expect(page.locator('.total-value')).toHaveText('₹350.50');
   await expect(page.locator('.words-row')).toContainText(
-    'Indian Rupees Three Hundred Fifty and Fifty Paise Only',
+    'Three Hundred Fifty Rupees and Fifty Paise Only',
   );
 });
 

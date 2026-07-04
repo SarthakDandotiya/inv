@@ -52,7 +52,8 @@ export function integerToIndianWords(value: number): string {
 
 /**
  * Format an INR amount in words, e.g.
- * 123456.78 → "Indian Rupees One Lakh Twenty-Three Thousand Four Hundred Fifty-Six and Seventy-Eight Paise Only".
+ * 5000 → "Five Thousand Rupees Only",
+ * 123456.78 → "One Lakh Twenty-Three Thousand Four Hundred Fifty-Six Rupees and Seventy-Eight Paise Only".
  */
 export function numberToIndianWords(amount: number): string {
   const value = Math.round((Number(amount) || 0) * 100) / 100;
@@ -66,7 +67,7 @@ export function numberToIndianWords(amount: number): string {
     paise = 0;
   }
 
-  let result = `Indian Rupees ${integerToIndianWords(rupees)}`;
+  let result = `${integerToIndianWords(rupees)} Rupees`;
   if (paise > 0) result += ` and ${twoDigit(paise)} Paise`;
   result += ' Only';
   if (negative) result = `Minus ${result}`;
