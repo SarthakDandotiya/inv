@@ -43,11 +43,24 @@ function triggerDownload(dataUrl: string, filename: string): void {
  */
 async function withExportMode<T>(node: HTMLElement, fn: (node: HTMLElement) => Promise<T>): Promise<T> {
   node.classList.add(EXPORT_MODE_CLASS);
+  // While editing on small screens the sheet is scaled down to fit the viewport.
+  // Force true A4 width for the capture so the exported document never reflows.
+  const prev = {
+    width: node.style.width,
+    maxWidth: node.style.maxWidth,
+    flexShrink: node.style.flexShrink,
+  };
+  node.style.width = '210mm';
+  node.style.maxWidth = 'none';
+  node.style.flexShrink = '0';
   try {
     await nextFrame();
     return await fn(node);
   } finally {
     node.classList.remove(EXPORT_MODE_CLASS);
+    node.style.width = prev.width;
+    node.style.maxWidth = prev.maxWidth;
+    node.style.flexShrink = prev.flexShrink;
   }
 }
 

@@ -31,6 +31,8 @@ body {
   /* Stop mobile browsers from inflating text (which overflowed/clipped inputs). */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Never allow horizontal page scroll / iOS shrink-to-fit zoom-out. */
+  overflow-x: hidden;
 }
 
 body {
@@ -176,9 +178,11 @@ body {
 
 .invoice-sheet {
   width: var(--a4-width);
-  /* Never let the centering flexbox shrink the sheet below A4 on small screens
-     (that would wrap text, grow the height and spill onto a second page). */
-  flex-shrink: 0;
+  /* Allow the centering flexbox to shrink the sheet to fit small screens while
+     editing (min-width:0 is required for this on iOS Safari). Export forces true
+     A4 width during capture (see export.ts). */
+  max-width: 100%;
+  min-width: 0;
   min-height: var(--a4-height);
   padding: var(--a4-pad);
   background: var(--sheet-bg);
@@ -198,6 +202,7 @@ body {
   font: inherit;
   color: var(--ink);
   width: 100%;
+  min-width: 0;
   border: none;
   border-bottom: 1px dashed transparent;
   background: transparent;
@@ -290,7 +295,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px 16px;
+  flex-wrap: wrap;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   padding: 6px 0;
