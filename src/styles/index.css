@@ -3,10 +3,9 @@
   --sheet-bg: #ffffff;
   --ink: #1a1a1a;
   --heading: #21212b;
-  --bold: #21212b;
   --line: #d1d5db;
   --label: #6b7280;
-  --table-head-bg: #f3f4f6;
+  --table-accent: #f3f4f6;
 
   --muted: #6b7280;
   --line-strong: #9ca3af;
@@ -124,17 +123,28 @@ body {
 
 .theme-grid {
   position: absolute;
+  top: 100%;
   right: 0;
   margin-top: 8px;
   z-index: 20;
+  width: min(300px, calc(100vw - 24px));
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 10px 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
   padding: 14px;
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* On small screens the trigger sits near the left edge, so open the panel
+   rightward from its left edge instead of off the left of the page. */
+@media (max-width: 640px) {
+  .theme-grid {
+    right: auto;
+    left: 0;
+  }
 }
 
 .theme-swatch {
@@ -236,11 +246,15 @@ body {
   gap: 16px;
 }
 
+/* With a logo, vertically centre the "Invoice" title against the logo height. */
+.invoice-header.has-logo {
+  align-items: center;
+}
+
 .invoice-title {
   margin: 0;
-  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
   font-size: 30px;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 1px;
   color: var(--heading);
   text-transform: uppercase;
@@ -332,9 +346,8 @@ body {
 
 .section-heading {
   margin: 0 0 2px;
-  font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--heading);
@@ -353,7 +366,7 @@ body {
 .party-name .field-input {
   font-weight: 700;
   font-size: 13px;
-  color: var(--bold);
+  color: var(--ink);
 }
 
 /* ---------- Items table ---------- */
@@ -382,8 +395,8 @@ body {
 }
 
 .items-table thead th {
-  background: var(--table-head-bg);
-  color: var(--bold);
+  background: var(--table-accent);
+  color: var(--label);
   font-weight: 700;
   font-size: 11px;
 }
@@ -425,14 +438,14 @@ body {
 .total-row .total-label {
   text-align: right;
   font-weight: 700;
-  color: var(--bold);
-  background: var(--table-head-bg);
+  color: var(--label);
+  background: var(--table-accent);
 }
 
 .total-row .total-value {
   text-align: right;
   font-weight: 700;
-  color: var(--bold);
+  color: var(--ink);
 }
 
 .words-row td {

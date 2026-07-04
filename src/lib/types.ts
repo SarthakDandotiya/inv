@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export interface Theme {
   /** Invoice sheet background colour. */
@@ -7,24 +7,21 @@ export interface Theme {
   text: string;
   /** Heading colour (Invoice title + section headings). */
   heading: string;
-  /** Colour for bold/emphasised text (names, totals, table headers). */
-  bold: string;
   /** Line separator / border colour. */
   line: string;
-  /** Field-label colour (PAN, GSTIN, Bank Name, footer labels, etc.). */
+  /** Field-label colour (PAN, GSTIN, table headers, Total, footer labels, etc.). */
   label: string;
-  /** Items-table heading / total-row background fill. */
-  tableHeadBg: string;
+  /** Items-table header + total-row background fill. */
+  tableAccent: string;
 }
 
 export const DEFAULT_THEME: Theme = {
   background: '#ffffff',
   text: '#1a1a1a',
   heading: '#21212b',
-  bold: '#21212b',
   line: '#d1d5db',
   label: '#6b7280',
-  tableHeadBg: '#f3f4f6',
+  tableAccent: '#f3f4f6',
 };
 
 export interface Party {

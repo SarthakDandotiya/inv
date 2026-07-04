@@ -112,19 +112,26 @@ describe('App', () => {
     expect(sheet.style.getPropertyValue('--heading')).toBe('#ff0000');
   });
 
-  it('exposes the Labels and Table header pickers and applies them', async () => {
+  it('exposes the Labels and Table accent pickers and applies them', async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
     const sheet = container.querySelector('.invoice-sheet') as HTMLElement;
     expect(sheet.style.getPropertyValue('--label')).toBe('#6b7280');
-    expect(sheet.style.getPropertyValue('--table-head-bg')).toBe('#f3f4f6');
+    expect(sheet.style.getPropertyValue('--table-accent')).toBe('#f3f4f6');
 
     await user.click(screen.getByText('Colours'));
     fireEvent.change(screen.getByLabelText('Labels'), { target: { value: '#112233' } });
-    fireEvent.change(screen.getByLabelText('Table header'), { target: { value: '#445566' } });
+    fireEvent.change(screen.getByLabelText('Table accent'), { target: { value: '#445566' } });
 
     expect(sheet.style.getPropertyValue('--label')).toBe('#112233');
-    expect(sheet.style.getPropertyValue('--table-head-bg')).toBe('#445566');
+    expect(sheet.style.getPropertyValue('--table-accent')).toBe('#445566');
+  });
+
+  it('no longer exposes a Bold text picker', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByText('Colours'));
+    expect(screen.queryByLabelText('Bold text')).toBeNull();
   });
 
   it('renders the Total inside the items table footer', () => {

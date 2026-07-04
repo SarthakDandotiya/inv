@@ -96,10 +96,9 @@ export default function App() {
     '--sheet-bg': data.theme.background,
     '--ink': data.theme.text,
     '--heading': data.theme.heading,
-    '--bold': data.theme.bold,
     '--line': data.theme.line,
     '--label': data.theme.label,
-    '--table-head-bg': data.theme.tableHeadBg,
+    '--table-accent': data.theme.tableAccent,
   } as CSSProperties;
 
   return (

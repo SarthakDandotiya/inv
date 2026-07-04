@@ -32,10 +32,10 @@ function normalizeTheme(raw: unknown): Theme {
     background: color(o.background, DEFAULT_THEME.background),
     text: color(o.text, DEFAULT_THEME.text),
     heading: color(o.heading, DEFAULT_THEME.heading),
-    bold: color(o.bold, DEFAULT_THEME.bold),
     line: color(o.line, DEFAULT_THEME.line),
     label: color(o.label, DEFAULT_THEME.label),
-    tableHeadBg: color(o.tableHeadBg, DEFAULT_THEME.tableHeadBg),
+    // Migrate the old `tableHeadBg` key to `tableAccent`.
+    tableAccent: color(o.tableAccent ?? o.tableHeadBg, DEFAULT_THEME.tableAccent),
   };
 }
 

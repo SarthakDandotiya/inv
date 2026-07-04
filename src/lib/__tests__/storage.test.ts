@@ -49,7 +49,12 @@ describe('storage', () => {
     expect(inv.theme.heading).toBe('#21212b');
     expect(inv.theme.background).toBe('#ffffff');
     expect(inv.theme.label).toBe('#6b7280');
-    expect(inv.theme.tableHeadBg).toBe('#f3f4f6');
+    expect(inv.theme.tableAccent).toBe('#f3f4f6');
+  });
+
+  it('migrates the old tableHeadBg key to tableAccent', () => {
+    const inv = normalizeInvoice({ theme: { tableHeadBg: '#abcdef' } });
+    expect(inv.theme.tableAccent).toBe('#abcdef');
   });
 
   it('keeps valid theme colours and rejects invalid ones', () => {
