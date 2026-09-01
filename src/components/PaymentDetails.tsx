@@ -14,6 +14,7 @@ export default function PaymentDetails({ value, onChange }: Props) {
       <Field label="Bank Name" value={value.bankName} onChange={(v) => onChange({ bankName: v })} />
       <Field label="Bank Account Number" value={value.accountNumber} onChange={(v) => onChange({ accountNumber: v })} />
       <Field label="IFSC Code" value={value.ifsc} onChange={(v) => onChange({ ifsc: v })} />
+      <Field label="UPI ID" value={value.upiId} onChange={(v) => onChange({ upiId: v })} />
     </section>
   );
 }
