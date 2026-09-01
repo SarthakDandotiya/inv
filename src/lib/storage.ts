@@ -90,6 +90,7 @@ export function normalizeInvoice(raw: unknown): InvoiceData {
       bankName: str(payment.bankName),
       accountNumber: str(payment.accountNumber),
       ifsc: str(payment.ifsc),
+      upiId: str(payment.upiId),
     },
     footer: {
       email: str(footer.email),

@@ -48,6 +48,7 @@ export interface Payment {
   bankName: string;
   accountNumber: string;
   ifsc: string;
+  upiId: string;
 }
 
 export interface Footer {
@@ -101,7 +102,7 @@ export function createEmptyInvoice(): InvoiceData {
     from: { name: '', address: '', pan: '', gstin: '' },
     to: { name: '', address: '', gstin: '' },
     items: [createEmptyItem(), createEmptyItem(), createEmptyItem()],
-    payment: { beneficiaryName: '', bankName: '', accountNumber: '', ifsc: '' },
+    payment: { beneficiaryName: '', bankName: '', accountNumber: '', ifsc: '', upiId: '' },
     footer: { email: '', phone: '', instagram: '' },
     logo: null,
     theme: { ...DEFAULT_THEME },
